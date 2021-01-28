@@ -7,8 +7,32 @@
 
 #include "11c.h"
 
+Node *assign(){
+    Node *node = equality();
+    if(consume("==")){
+        node = new_node(ND_ASSIGN, node, assign());
+    }
+    return node;
+}
 
 
+Node *expr(){
+    return assign();
+}
+
+Node *stmt(){
+    Node *node = expr();
+    expect(";");
+    return node;
+}
+
+void program(){
+    int i = 0;
+    while (!at_eof()) {
+        code[i++] = stmt();
+    }
+    code[i] = NULL;
+}
 
 Node *new_node(NodeKind kind){
     Node *node = calloc(1, sizeof(Node));
@@ -30,9 +54,6 @@ Node *new_num(int val){
 }
 
 
-Node *expr(){
-    return equality();
-}
 
 Node *equality(){
     Node *node = relational();
@@ -105,6 +126,14 @@ Node *unary(){
 }
 
 Node *primary() {
+
+    Token *tok = consume_ident();
+    if(tok){
+        Node *node = calloc(1, sizeof(Node));
+        node->kind = ND_LVAR;
+        node->offset = (tok->str[0] - 'a' + 1) * 8;
+        return node;
+    }
 
     if(consume("(")){
         Node *node = expr();

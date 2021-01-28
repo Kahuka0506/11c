@@ -11,6 +11,7 @@ char *user_input;
 
 
 
+
 //________________________________________________________________
 
 void error(char *format, ...);
@@ -69,6 +70,8 @@ typedef enum{
     ND_NE,         // !=
     ND_LT,         // <
     ND_LE,         // <=
+    ND_ASSIGN,
+    ND_LVAR,
     ND_NUM,        // Integer
 } NodeKind;
 typedef struct Node Node;
@@ -77,7 +80,12 @@ struct Node{
     Node *lhs;
     Node *rhs;
     int val;
+    int offset;
 };
+
+Node *code[100];
+
+
 
 Node *new_node(NodeKind kind);
 Node *new_binary(NodeKind kind, Node *lhs, Node *rhs);
@@ -92,7 +100,7 @@ Node *mul();
 Node *unary();
 Node *primary();
 
-
+void program();
 
 
 void gen(Node *node);

@@ -21,19 +21,26 @@ int main(int argc, char *argv[]){
 
 
     user_input = argv[1];
-    token = tokenize(argv[1]);
-    Node *node = expr();
-
+    //token = tokenize(argv[1]);
+    //Node *node = expr();
+    tokenize();
+    program();
 
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
 
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    printf("  sub rsp, 208\n");
 
-    gen(node);
+    for (int i = 0; code[i]; i++) {
+        gen(code[i]);
+    }
 
 
+    printf("  mov rsp, rbp\n");
     printf("  pop rax\n");
     printf("  ret\n");
 
